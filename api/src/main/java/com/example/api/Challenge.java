@@ -1,11 +1,14 @@
 package com.example.api;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "challenges") // Maps this class to the 'challenges' table
@@ -18,11 +21,11 @@ public class Challenge {
     private String description;
     private String category;
     @Column(name = "created_at")
-    private java.time.LocalDate createdAt;
+    private LocalDate createdAt;
     private String reflection;
     private boolean completed;
     @Column(name = "completed_at")
-    private java.time.LocalDate completedAt;
+    private LocalDate completedAt;
 
     // JPA requires a default, no-argument constructor
     public Challenge() {
@@ -31,10 +34,6 @@ public class Challenge {
     // Getters and Setters
     public short getId() {
         return id;
-    }
-
-    public void setId(short id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -61,13 +60,14 @@ public class Challenge {
         this.category = category;
     }
 
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt ;
+    }
+
     public java.time.LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(java.time.LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
 
     public String getReflection() {
         return reflection;
@@ -89,7 +89,7 @@ public class Challenge {
         return completedAt;
     }
     
-    public void setCompletedAt(java.time.LocalDate completedAt) {
+    public void setCompletedAt(LocalDate completedAt) {
         this.completedAt = completedAt;
     }
 

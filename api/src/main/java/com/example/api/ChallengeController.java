@@ -27,9 +27,9 @@ public class ChallengeController {
         return challengeService.findChallengeById(id);
     }
 
-    @GetMapping(value = "/current-month", produces = "application/json")
-    public List<Challenge> getCurrentMonthsCompletedChallenges() {
-        return challengeService.findCurrentMonthsCompletedChallenges();
+    @GetMapping(value = "/month/{month}", produces = "application/json")
+    public List<Challenge> getCompletedChallengesByMonth(@PathVariable int month) {
+        return challengeService.findCompletedChallengesByMonth(month);
     }
 
     @GetMapping(value = "/incomplete", produces = "application/json")
@@ -39,9 +39,8 @@ public class ChallengeController {
 
 
     @GetMapping(value = "/progress", produces = "application/json")
-    public Map<String, List<Challenge>> getProgressOverTime() {
+    public Map<Integer, Long> getProgressOverTime() {
         return challengeService.findProgressOverTime();
-
     }
 
     @GetMapping(value = "/category", produces = "application/json")
@@ -58,13 +57,15 @@ public class ChallengeController {
     @PutMapping(value = "/{id}", produces = "application/json")
     public Challenge updateChallenge(@PathVariable short id, @RequestBody Challenge updatedChallenge) {
         Challenge originalChallenge = challengeService.findChallengeById(id);
-        return challengeService.updatedChallenge(originalChallenge, updatedChallenge);
+        return challengeService.updateChallenge(originalChallenge, updatedChallenge);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
     public void deleteChallenge(@PathVariable short id ) {
            challengeService.deleteChallenge(id);
     }
+
+    
 
     
 

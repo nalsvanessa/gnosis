@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS challenges (
     created_at DATE NOT NULL,
     reflection TEXT,
     completed BOOLEAN NOT NULL DEFAULT FALSE,
-    completed_at DATE
+    completed_at DATETIME
 );
