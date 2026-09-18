@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 
 @Entity
@@ -17,8 +18,13 @@ public class Challenge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private short id;
+    @NotNull 
     private String title;
+    @NotNull
+    private String difficulty;
+    @NotNull
     private String description;
+    @NotNull
     private String category;
     @Column(name = "created_at")
     private LocalDate createdAt;
@@ -92,6 +98,14 @@ public class Challenge {
     public void setCompletedAt(LocalDate completedAt) {
         this.completedAt = completedAt;
     }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+       this.difficulty = difficulty;
+}
 
 
 

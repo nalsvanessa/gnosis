@@ -21,7 +21,7 @@ public class ChallengeService {
 
     
     public Challenge findChallengeById(short id) {
-        return challengeRepository.findById(id).orElseThrow();
+        return challengeRepository.findById(id).orElseThrow(() -> new ChallengeNotFoundException("Challenge not found"));
     }
 
     public List<Challenge> findCompletedChallengesByMonth(int month) {
@@ -48,7 +48,7 @@ public class ChallengeService {
          return progress;
     }
 
-    public Map<String, List<Challenge>> findChallengesByCategory() {
+    public Map<String, List<Challenge>> listChallengesByCategory() {
          List<Challenge> allChallenges = challengeRepository.findAll();
          Map<String, List<Challenge>> category = allChallenges.stream()           
                            .filter(i -> i.getCompleted())
@@ -64,12 +64,13 @@ public class ChallengeService {
          return challenge;
      }
     
-    public Challenge updateChallenge(Challenge updatedChallenge, Challenge originalChallenge) {
+    public Challenge updateChallenge(Challenge originalChallenge, Challenge updatedChallenge) {
          java.time.LocalDate date = LocalDate.now();
          originalChallenge.setTitle(updatedChallenge.getTitle());
          originalChallenge.setDescription(updatedChallenge.getDescription());
          originalChallenge.setReflection(updatedChallenge.getReflection());
          originalChallenge.setCategory(updatedChallenge.getCategory());
+         originalChallenge.setDifficulty(updatedChallenge.getDifficulty());
          if(!originalChallenge.getCompleted() && updatedChallenge.getCompleted()
      ){
             originalChallenge.setCompletedAt(date);

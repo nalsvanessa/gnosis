@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/challenge")
@@ -28,7 +32,7 @@ public class ChallengeController {
     }
 
     @GetMapping(value = "/month/{month}", produces = "application/json")
-    public List<Challenge> getCompletedChallengesByMonth(@PathVariable int month) {
+    public List<Challenge> getCompletedChallengesByMonth(@Min(1) @Max(12) @PathVariable int month) {
         return challengeService.findCompletedChallengesByMonth(month);
     }
 
@@ -45,17 +49,17 @@ public class ChallengeController {
 
     @GetMapping(value = "/category", produces = "application/json")
     public Map<String, List<Challenge>> getCompletedChallengesByCategory() {
-        return challengeService.findChallengesByCategory();
+        return challengeService.listChallengesByCategory();
 
     }
 
     @PostMapping(value = "/addChallenge")
-    public Challenge postChallenge(@RequestBody Challenge challenge) {
+    public Challenge postChallenge(@Valid @RequestBody Challenge challenge) {
         return challengeService.createChallenge(challenge);
     }
 
     @PutMapping(value = "/{id}", produces = "application/json")
-    public Challenge updateChallenge(@PathVariable short id, @RequestBody Challenge updatedChallenge) {
+    public Challenge updateChallenge(@PathVariable short id, @Valid @RequestBody Challenge updatedChallenge) {
         Challenge originalChallenge = challengeService.findChallengeById(id);
         return challengeService.updateChallenge(originalChallenge, updatedChallenge);
     }
