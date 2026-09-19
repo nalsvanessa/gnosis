@@ -1,5 +1,5 @@
-
 import ChallengeCard from '../components/ChallengeCard';
+import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
 import type { Challenge } from '../data-types/Challenge';
 
@@ -66,6 +66,8 @@ function Challenges() {
 
     return (
         <div>
+            <Navbar />
+
             <h1>My Challenges</h1>
 
             <div>
@@ -137,4 +139,3 @@ function Challenges() {
 }
 
 export default Challenges;
-
