@@ -41,6 +41,11 @@ public class ChallengeController {
         return challengeService.findIncompleteChallenges();
     }
 
+    @GetMapping(value = "/completed", produces = "application/json")
+    public List<Challenge> getCompletedChallenges() {
+       return challengeService.findCompletedChallenges();
+   }
+
 
     @GetMapping(value = "/progress", produces = "application/json")
     public Map<Integer, Long> getProgressOverTime() {

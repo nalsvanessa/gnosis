@@ -40,6 +40,14 @@ public class ChallengeService {
          return incompletedChallenges;
     }
 
+    public List<Challenge> findCompletedChallenges() {
+    List<Challenge> allChallenges = challengeRepository.findAll();
+    List<Challenge> completedChallenges = allChallenges.stream()
+        .filter(i -> i.getCompleted())
+        .collect(Collectors.toList());
+       return completedChallenges;
+   }
+
     public Map<Integer, Long> findProgressOverTime() {
          List<Challenge> allChallenges = challengeRepository.findAll();
          Map<Integer, Long> progress = allChallenges.stream()           
