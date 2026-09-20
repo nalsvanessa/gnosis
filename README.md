@@ -1,287 +1,657 @@
-# Full-Stack Starter
+# Gnosis
 
-A minimal but complete starter repo for the Full Stack Software Development assessment. It contains a React (Vite / TypeScript) frontend calling a Spring Boot REST API, which reads from a MySQL database. It exists to give you a known-good foundation to build your own application on.
+Gnosis is a full-stack web application that encourages users to step outside their comfort zone and learn from their experiences. Users can create challenges, record reflections, track completed challenges and view their progress over time.
 
-To get started, you can run the application directly on your own machine. Containerising the stack is part of the assessment, so writing a Dockerfile for the API, another for the frontend, and the Compose file that runs them together is your task.
+The name **Gnosis** comes from the Greek word for experiential or personal knowledge.
 
-**The assessment brief lives in [ASSESSMENT.md](ASSESSMENT.md).** Read it before you start building.
+## Features
 
----
+* Create new challenges
+* View completed and incomplete challenges
+* Edit existing challenges
+* Delete challenges
+* Add reflections to challenges
+* Filter challenges by completion status, category and month
+* View the total number of completed challenges
+* View completed challenges by category
+* View progress over time using a chart
+* Responsive frontend for different screen sizes
+
+## Tech Stack
+
+### Frontend
+
+* React
+* TypeScript
+* Vite
+* React Router
+* Recharts
+* CSS
+
+### Backend
+
+* Java 21
+* Spring Boot
+* Spring Web
+* Spring Data JPA
+* Spring Validation
+* Maven
+
+### Database
+
+* MySQL 8.4
+
+### Infrastructure
+
+* Docker
+* Docker Compose
 
 ## Project Structure
 
 ```text
-fsd-project/
-├── api/                            # Spring Boot (Java 21) backend
+gnosis/
+├── api/
 │   ├── src/
-│   │   └── main/
-│   │       └── resources/
-│   │           ├── application.properties
-│   │           ├── schema.sql              # Database schema (DDL)
-│   │           └── data.sql                # Seed data (DML)
-│   ├── local.properties.example    # Template for your local DB credentials
+│   ├── Dockerfile
+│   ├── local.properties.example
 │   └── pom.xml
-├── frontend/                       # React (Vite / TypeScript) frontend
+├── frontend/
 │   ├── src/
-│   ├── package.json
-│   └── vite.config.ts
-├── .env.example                    # Template for Docker Compose variables
-└── ASSESSMENT.md                   # The assessment brief
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── data-types/
+│   │   └── ...
+│   ├── Dockerfile
+│   └── package.json
+├── postman/
+│   └── Gnosis api.postman_collection.json
+├── docker-compose.yml
+├── .env.example
+└── README.md
 ```
-
----
 
 ## Prerequisites
 
-For Part 1 (running locally):
+For local development:
 
-- [JDK 21](https://adoptium.net/) — the API targets Java 21
-- [Node.js 22+](https://nodejs.org/)
-- [MySQL 8](https://dev.mysql.com/downloads/mysql/) running on your machine
-- [Git](https://git-scm.com/)
+* Java 21
+* Node.js and npm
+* MySQL
 
-For Part 2 (containerising):
+For running the complete application with Docker:
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* Docker Desktop
 
----
+The project includes the Maven Wrapper, so Maven does not need to be installed separately.
 
-## Part 1: Run the Starter Locally
+## Local Setup
 
-### 1. Create the database
-
-Connect to your local MySQL server and create an empty database:
-
-```sql
-CREATE DATABASE fsd_project;
-```
-
-You do not need to create any tables. The API creates them from `schema.sql` on startup.
-
-### 2. Configure your database credentials
-
-Your credentials live in `api/local.properties`, which is gitignored so it can never be committed. Create it from the template:
+### 1. Clone the repository
 
 ```bash
-cd api
-cp local.properties.example local.properties
+git clone <repository-url>
+cd gnosis
 ```
 
-Open `api/local.properties` and set the values to match your MySQL installation:
+### 2. Configure the backend
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/fsd_project
-spring.datasource.username=your_local_mysql_user
-spring.datasource.password=your_local_mysql_password
+Inside the `api` directory, copy the example configuration file:
+
+```text
+api/local.properties.example
 ```
 
-> **Never put real credentials in `application.properties`.** That file is tracked by Git, so anything you write there ends up on GitHub. Keeping secrets out of your properties files is also a graded requirement of the assessment.
+to:
 
-### 3. Start the API
+```text
+api/local.properties
+```
+
+Add your local MySQL database configuration to `local.properties`.
+
+This file is ignored by Git so local database credentials are not committed to the repository.
+
+### 3. Set up the database
+
+Create a MySQL database using the database name configured in your local properties.
+
+The project contains:
+
+```text
+api/src/main/resources/schema.sql
+api/src/main/resources/data.sql
+```
+
+`schema.sql` creates the `challenges` table and `data.sql` provides initial usable challenge records.
+
+The seed data contains a mixture of completed and incomplete challenges across different categories and difficulty levels.
+
+### 4. Start the backend
 
 From the `api` directory:
 
 ```bash
-./mvnw spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 
-Wait for `Started ApiApplication`. You can check it directly:
+The API will be available at:
 
-```bash
-curl http://localhost:8080/api/greeting
+```text
+http://localhost:8080
 ```
 
-### 4. Start the frontend
+### 5. Start the frontend
 
-In a second terminal, from the `frontend` directory:
+From the `frontend` directory:
 
 ```bash
-cd frontend
 npm install
 npm run dev
 ```
 
-Open **http://localhost:5173**. You should see the seeded greeting from the database rendered on the page.
+The frontend will be available at:
 
-The frontend fetches the relative path `/api/greeting`. Vite's dev server proxies anything starting with `/api` to the backend, which is why the frontend never needs to know the API's absolute address. That proxy is configured in `frontend/vite.config.ts`.
-
----
-
-## Database & Schema Management
-
-Two SQL files under `api/src/main/resources` control the database:
-
-- **`schema.sql`** — table definitions (DDL), such as `CREATE TABLE IF NOT EXISTS greetings ...`
-- **`data.sql`** — seed data (DML) inserted on startup
-
-Because `application.properties` sets `spring.sql.init.mode=always`, **both scripts run on every single startup**, not just the first one. Your local MySQL keeps its data between restarts, so any plain `INSERT` in `data.sql` would add a duplicate row each time you start the API.
-
-This is why the seeded insert only runs when the table is empty:
-
-```sql
-INSERT INTO greetings (message)
-SELECT 'Hello World from Spring Boot Seed!'
-WHERE NOT EXISTS (SELECT 1 FROM greetings);
+```text
+http://localhost:5173
 ```
 
-Write your own seed data so that re-running it is harmless.
+## Docker Setup
 
-### Querying the database directly
+The application can also be run using Docker Compose.
 
-Running locally:
+### 1. Create the Docker environment file
 
-```bash
-mysql -u your_local_mysql_user -p
+Copy:
+
+```text
+.env.example
 ```
 
-Once you have containerised the stack, the same client is available inside the running database container:
+to:
 
-```bash
-docker compose exec db mysql -u your_mysql_user -p
+```text
+.env
 ```
 
-Then, in either case:
+Add your own values for:
 
-```sql
-USE fsd_project;
-SELECT * FROM greetings;
+```env
+MYSQL_ROOT_PASSWORD=
+MYSQL_DATABASE=
+MYSQL_USER=
+MYSQL_PASSWORD=
 ```
 
----
+The `.env` file is ignored by Git.
 
-## Part 2: Containerise the Stack
+### 2. Build and start the application
 
-This part is assessed. See the Containerisation section of [ASSESSMENT.md](ASSESSMENT.md) for the marking criteria.
-
-### 1. Configure the environment variables
-
-Duplicate the template and fill it in with credentials of your choosing:
-
-```bash
-cp .env.example .env
-```
-
-```bash
-MYSQL_ROOT_PASSWORD=your_secure_root_password
-MYSQL_DATABASE=a_database_name
-MYSQL_USER=a_database_user
-MYSQL_PASSWORD=your_user_password
-```
-
-`.env` is read by Docker Compose only. It has no effect on the local run in Part 1, which reads `api/local.properties` instead.
-
-### 2. Write the Dockerfiles
-
-Neither application ships with a Dockerfile, so you must add your own.
-
-#### `api/Dockerfile`
-
-- Use a multi-stage build.
-- The API targets Java 21, so pick base images to match.
-- `pom.xml` sets no `<finalName>` by default, so the jar is named after the artifact and version (`api-0.0.1-SNAPSHOT.jar`). You should either copy it with a wildcard to keep the Dockerfile working when the version changes, or set the `<finalName>` value explicitly.
-- Run the application as a non-root user rather than as `root`.
-- The app listens on port 8080.
-
-#### `frontend/Dockerfile`
-
-- Ensure the project's dependencies are installed exclusively from the lock file.
-- Use a start command that binds to all interfaces.
-- The app listens on port 5173.
-- Get the Vite dev server working before attempting the Nginx build for Stretch Goal A in [ASSESSMENT.md](ASSESSMENT.md).
-
-### 3. Write `docker-compose.yml`
-
-Add a Composer file in the project root. Your configuration must orchestrate three services:
-
-**`db`**
-
-- Uses a versioned `mysql` image
-- Takes its credentials from the four variables in `.env`
-- Persists its data in a named volume, so records survive a restart
-- Declares a healthcheck so other services can wait for it to be ready
-
-> **Watch out:** while MySQL sets itself up for the first time it runs a temporary internal server that accepts connections over a local socket but is not yet listening on port 3306. A healthcheck that talks to `localhost` will therefore report "healthy" too early, your API will start, and it will fail with `Connection refused`. Make sure your healthcheck tests a real network connection.
-
-**`api`**
-
-- Builds from `./api`.
-- Waits for `db` to report healthy before starting.
-- Receives `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` and `SPRING_DATASOURCE_PASSWORD` as environment variables, derived from your `.env` values. 
-- Sets the correct host name in the service name.
-- Exposes port `8080`
-
-**`frontend`**
-
-- Builds from `./frontend`.
-- Sets the correct host name for `VITE_API_PROXY_TARGET` so the Vite proxy targets the API container.
-- Exposes port `5173`.
-
-You also need a **named volume** for the MySQL data and a **named network** that all three services join, so they can reach each other by service name in isolation from other containers.
-
-Nothing in the application code needs to change. The `SPRING_DATASOURCE_*` environment variables automatically override the values in `api/local.properties`, because [Spring Boot grants environment variables higher precedence than configuration files](https://docs.spring.io/spring-boot/reference/features/external-config.html).
-
-### 4. Launch the stack
+From the project root:
 
 ```bash
 docker compose up --build
 ```
 
-Docker coordinates the startup: the database initialises, the API waits for it to become healthy before connecting, and the frontend starts last.
+Docker Compose starts:
 
----
+* MySQL
+* Spring Boot API
+* React frontend
 
-## Accessing the Services
+The API waits for MySQL to become healthy before starting.
 
-| Service     | Local (Part 1)                     | Docker (Part 2)                                |
-| ----------- | ---------------------------------- | ---------------------------------------------- |
-| Frontend UI | http://localhost:5173              | http://localhost:5173                          |
-| Backend API | http://localhost:8080/api/greeting | http://localhost:8080/api/greeting             |
-| Database    | localhost:3306                     | inside the Docker network, as the `db` service |
+### 3. Access the application
 
-Only one program can listen on a given port at a time, so stop your local MySQL before publishing the database container on port 3306, or map it to a spare host port such as `3307:3306`. The API container does not need that mapping either way, because it reaches the database over the Docker network.
+Frontend:
 
----
+```text
+http://localhost:5173
+```
 
-## Stopping and Resetting
+Backend API:
 
-Stop the containers while keeping your database records:
+```text
+http://localhost:8080
+```
+
+MySQL runs on port `3306` internally within the Docker network and is not exposed to the host machine.
+
+### 4. Stop the application
 
 ```bash
 docker compose down
 ```
 
-Delete the containers **and** the stored data:
+To stop the containers while keeping the database volume:
 
 ```bash
-docker compose down -v
+docker compose down
 ```
 
-The `-v` flag removes the named volume holding the MySQL data. You need this whenever you change your `.env` credentials, because MySQL only creates its users and database the first time it starts against an empty data directory. Changing `.env` alone will not update an already-initialised volume.
+The MySQL data is stored in the `mysql-data` Docker volume.
 
----
+## API Documentation
 
-## Troubleshooting
+The API follows a RESTful structure using a Controller, Service and Repository architecture.
 
-**`Failed to configure a DataSource: 'url' attribute is not specified`**
+```text
+Frontend
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Repository
+   ↓
+MySQL
+```
 
-The API cannot find your database settings. You most likely have not created `api/local.properties` yet — see Part 1, step 2.
+### Endpoints
 
-**The API starts but cannot find `local.properties`**
+| Method | Endpoint                       | Description                                  | Success |
+| ------ | ------------------------------ | -------------------------------------------- | ------- |
+| GET    | `/api/challenge/{id}`          | Get a challenge by ID                        | 200 OK  |
+| GET    | `/api/challenge/month/{month}` | Get completed challenges for a month         | 200 OK  |
+| GET    | `/api/challenge/incomplete`    | Get incomplete challenges                    | 200 OK  |
+| GET    | `/api/challenge/completed`     | Get completed challenges                     | 200 OK  |
+| GET    | `/api/challenge/progress`      | Get completed challenges grouped by month    | 200 OK  |
+| GET    | `/api/challenge/category`      | Get completed challenges grouped by category | 200 OK  |
+| POST   | `/api/challenge/addChallenge`  | Create a new challenge                       | 200 OK  |
+| PUT    | `/api/challenge/{id}`          | Update a challenge                           | 200 OK  |
+| DELETE | `/api/challenge/{id}`          | Delete a challenge                           | 200 OK  |
 
-That file is located relative to the directory you run the API from, so run `./mvnw spring-boot:run` from inside `api/`. If you launch the app from your IDE instead, set the run configuration's working directory to the `api` folder.
+### GET Challenge by ID
 
-**`Access denied for user ... (using password: NO)`**
+```text
+GET /api/challenge/{id}
+```
 
-Your username or password is empty or wrong. If the username in the error is not one you recognise, the MySQL driver has fallen back to your operating system account, which means it received no username at all.
+Example:
 
-**`./mvnw test` fails**
+```text
+GET /api/challenge/1
+```
 
-`ApiApplicationTests` starts the entire Spring context, including the database connection, so MySQL must be running and `local.properties` must be configured before the tests will pass.
+Returns the challenge matching the supplied ID.
 
-**Code changes do not appear in a running container**
+If the challenge does not exist, the application returns a `404 NOT FOUND` response with an error message.
 
-Docker Compose does not rebuild an image just because you edited a file. After changing anything under `api/src`, rebuild:
+### GET Completed Challenges by Month
+
+```text
+GET /api/challenge/month/{month}
+```
+
+Example:
+
+```text
+GET /api/challenge/month/1
+```
+
+Returns completed challenges for the specified month.
+
+The month must be between `1` and `12`.
+
+### GET Incomplete Challenges
+
+```text
+GET /api/challenge/incomplete
+```
+
+Returns all challenges that are currently incomplete.
+
+### GET Completed Challenges
+
+```text
+GET /api/challenge/completed
+```
+
+Returns all completed challenges.
+
+### GET Progress
+
+```text
+GET /api/challenge/progress
+```
+
+Returns the number of completed challenges grouped by month.
+
+Example response:
+
+```json
+{
+  "1": 2,
+  "2": 4
+}
+```
+
+### GET Challenges by Category
+
+```text
+GET /api/challenge/category
+```
+
+Returns completed challenges grouped by category.
+
+### POST Add Challenge
+
+```text
+POST /api/challenge/addChallenge
+```
+
+Example request body:
+
+```json
+{
+  "title": "Find a new job",
+  "difficulty": "Medium",
+  "description": "Apply for 1 job every week",
+  "category": "Career",
+  "reflection": null,
+  "completed": false,
+  "completedAt": null
+}
+```
+
+The backend automatically sets the `createdAt` date when a new challenge is created.
+
+### PUT Update Challenge
+
+```text
+PUT /api/challenge/{id}
+```
+
+Example:
+
+```text
+PUT /api/challenge/1
+```
+
+Example request body:
+
+```json
+{
+  "title": "Talk to stranger",
+  "difficulty": "Hard",
+  "description": "On your commute, try to have a conversation with a stranger.",
+  "category": "Social",
+  "reflection": "I felt more comfortable starting the conversation this time.",
+  "completed": false
+}
+```
+
+The endpoint updates the existing challenge.
+
+When a challenge changes from incomplete to completed, the backend records the completion date. When it changes from completed to incomplete, the completion date is cleared.
+
+### DELETE Challenge
+
+```text
+DELETE /api/challenge/{id}
+```
+
+Example:
+
+```text
+DELETE /api/challenge/1
+```
+
+Deletes the specified challenge.
+
+## Request and Response Data
+
+Challenges use the following structure:
+
+```json
+{
+  "id": 1,
+  "title": "Talk to stranger",
+  "difficulty": "Hard",
+  "description": "On your commute, try to have a conversation with a stranger.",
+  "category": "Social",
+  "createdAt": "2026-05-03",
+  "reflection": "I felt more comfortable starting the conversation.",
+  "completed": true,
+  "completedAt": "2026-05-10"
+}
+```
+
+The frontend uses a TypeScript `Challenge` interface to represent this API response.
+
+## API Error Handling
+
+The backend uses a centralised `@ControllerAdvice` exception handler.
+
+A custom `ChallengeNotFoundException` is used when a requested challenge cannot be found.
+
+Example:
+
+```text
+404 NOT FOUND
+Error: Challenge not found
+```
+
+Validation is also used on incoming challenge requests through Spring Validation.
+
+## Database
+
+The application uses MySQL for relational persistence.
+
+The `challenges` table includes:
+
+| Column         | Type     | Description                     |
+| -------------- | -------- | ------------------------------- |
+| `id`           | SMALLINT | Primary key with auto-increment |
+| `title`        | VARCHAR  | Challenge title                 |
+| `difficulty`   | VARCHAR  | Challenge difficulty            |
+| `description`  | TEXT     | Challenge description           |
+| `category`     | VARCHAR  | Challenge category              |
+| `created_at`   | DATE     | Date challenge was created      |
+| `reflection`   | TEXT     | User reflection                 |
+| `completed`    | BOOLEAN  | Completion status               |
+| `completed_at` | DATETIME | Date challenge was completed    |
+
+The project currently uses a single table, so no foreign keys are required.
+
+## Seed Data
+
+The project includes initial challenge records in `data.sql`.
+
+The seed data provides a mixture of:
+
+* Completed and incomplete challenges
+* Social challenges
+* Career challenges
+* Learning challenges
+* Health & Fitness challenges
+* Creativity challenges
+* Easy, Medium and Hard challenges
+
+The records are inserted only when a challenge with the same title does not already exist.
+
+## Manual API Testing
+
+All nine API endpoints were manually tested using Postman.
+
+A Postman collection containing the API requests is included in:
+
+```text
+postman/Gnosis api.postman_collection.json
+```
+
+The collection contains requests for:
+
+* Getting a challenge by ID
+* Getting completed challenges by month
+* Getting incomplete challenges
+* Getting completed challenges
+* Getting progress
+* Getting challenges by category
+* Adding a challenge
+* Updating a challenge
+* Deleting a challenge
+
+The Postman collection can be imported into Postman to view and run the API requests.
+
+## Frontend
+
+The frontend is built with React and TypeScript.
+
+React hooks including `useState` and `useEffect` are used for managing component state and fetching API data.
+
+The application contains three main pages:
+
+### Dashboard
+
+Displays:
+
+* Number of completed challenges
+* Progress over time
+* Recent completed challenges
+* Completed challenges by category
+
+### Challenges
+
+Displays challenge cards and allows users to:
+
+* View challenge information
+* Edit challenges
+* Delete challenges
+* Filter by completion status
+* Filter by category
+* Filter by month
+
+### Add Challenge
+
+Provides a validated form for creating new challenges.
+
+The form performs client-side validation before submitting the request, while the backend also uses Spring Validation.
+
+## Docker Architecture
+
+Docker Compose runs three services:
+
+```text
+             ┌───────────────┐
+             │   Frontend    │
+             │    :5173      │
+             └───────┬───────┘
+                     │
+                     ▼
+             ┌───────────────┐
+             │      API      │
+             │    :8080      │
+             └───────┬───────┘
+                     │
+                     ▼
+             ┌───────────────┐
+             │     MySQL     │
+             │ :3306 internal│
+             └───────────────┘
+```
+
+The services communicate through the Docker network `gnosis-network`.
+
+Database credentials are provided to Docker Compose through environment variables rather than being hardcoded into the Java application.
+
+The API depends on the database health check before starting.
+
+## Assessment Requirements
+
+### Frontend
+
+* TypeScript interfaces are used for API response data.
+* React hooks are used for state management and API requests.
+* The Add Challenge page contains a validated form.
+* Challenges are displayed using reusable challenge card components.
+
+### Backend
+
+* RESTful GET and write endpoints are provided.
+* Controller, Service and Repository layers separate responsibilities.
+* A custom exception extends `RuntimeException`.
+* Centralised exception handling is implemented using `@ControllerAdvice`.
+
+### MySQL
+
+* MySQL provides relational persistence.
+* The `challenges` table uses explicit column types.
+* The `id` column is an auto-incrementing primary key.
+
+### Docker
+
+* Docker Compose orchestrates the frontend, backend and MySQL services.
+* Database configuration is supplied through environment variables.
+* Services communicate using a Docker network.
+* The API waits for the MySQL health check before starting.
+
+### Documentation
+
+* This README provides local setup instructions.
+* Configuration variables and environment setup are documented.
+* Frontend and API access points are provided.
+* All nine API endpoints are documented.
+* A manual Postman collection is included for API documentation and testing.
+* `schema.sql` and `data.sql` provide the database structure and initial records.
+
+### GitHub Project Board
+
+The project includes a GitHub Project Board containing the foundational development tasks used to plan and track the project.
+
+## Future Improvements
+
+Possible future improvements include:
+
+* User accounts and authentication
+* Persistent user-specific challenges
+* More detailed progress statistics
+* Improved challenge completion controls
+* More advanced filtering
+* Production frontend deployment using a multi-stage Dockerfile and Nginx
+* Kubernetes deployment
+
+## Running the Complete Application with Docker
+
+From the project root:
 
 ```bash
 docker compose up --build
 ```
+
+Then open:
+
+```text
+http://localhost:5173
+```
+
+The API is available at:
+
+```text
+http://localhost:8080
+```
+
+To stop the application:
+
+```bash
+docker compose down
+```
+
+## Final Submission Checklist
+
+Before submitting Gnosis, check that:
+
+* [ ] README is updated and committed
+* [ ] `.env.example` is included
+* [ ] `api/local.properties.example` is included
+* [ ] `.env` is not committed
+* [ ] `api/local.properties` is not committed
+* [ ] `schema.sql` is included
+* [ ] `data.sql` is included
+* [ ] Frontend and backend Dockerfiles are included
+* [ ] `docker-compose.yml` is included
+* [ ] Postman collection is included
+* [ ] All nine API endpoints are documented
+* [ ] Docker Compose starts the complete application successfully
+* [ ] Frontend is accessible on port 5173
+* [ ] API is accessible on port 8080
+* [ ] GitHub Project Board contains the required foundational cards
