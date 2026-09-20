@@ -1,6 +1,8 @@
+
 import { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import type { Challenge } from '../data-types/Challenge';
+import gnosisIllustration from '../assets/gnosis-illustration.svg';
 
 import {
   BarChart,
@@ -37,64 +39,117 @@ function Dashboard() {
         new Date(a.completedAt!).getTime()
     )
     .slice(0, 5);
+  const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
 
-  const chartData = Object.entries(progress).map(([month, count]) => ({
-    month: Number(month),
-    count
-  }));
+const chartData = Object.entries(progress).map(([month, count]) => ({
+  month: months[Number(month) - 1],
+  count
+}));
 
   return (
-    <div>
+    <div className="dashboard">
       <Navbar />
 
-      <h1>GNOSIS</h1>
+      <main className="dashboard-content">
 
-      <h2>Your Progress</h2>
+        <section className="dashboard-header">
 
-      <div>
-        <h3>Completed Challenges</h3>
-        <p>{completedChallenges.length}</p>
-      </div>
+            <img
+             className="dashboard-image"
+             src={gnosisIllustration}
+              alt="A person stepping outside a doorway"/>
+          <p className="eyebrow">YOUR JOURNEY</p>
+          <h1>GNOSIS</h1>
+          <p className="tagline">
+            Step outside your comfort zone. Learn through experience.
+          </p>
+        </section>
 
-      <div>
-        <h3>Progress Over Time</h3>
+        <h2>Your Progress</h2>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
+        <section className="stats-grid">
 
-            <XAxis
-              dataKey="month"
-              label={{
-                value: "Month",
-                position: "insideBottom",
-                offset: -5
-              }}
-            />
-
-            <YAxis />
-
-            <Tooltip />
-
-            <Bar
-              dataKey="count"
-              name="Completed"
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div>
-        <h3>Recent Challenges</h3>
-
-        {recentChallenges.map(challenge => (
-          <div key={challenge.id}>
-            <h4>{challenge.title}</h4>
-            <p>{challenge.category}</p>
-            <p>{challenge.completedAt}</p>
+          <div className="stat-card">
+            <p className="card-label">COMPLETED CHALLENGES</p>
+            <p className="stat-number">{completedChallenges.length}</p>
+            <p className="stat-description">
+              Experiences you've completed
+            </p>
           </div>
-        ))}
-      </div>
+
+        </section>
+
+        <section className="chart-card">
+          <div className="section-heading">
+            <div>
+              <p className="card-label">PROGRESS</p>
+              <h3>Progress Over Time</h3>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis
+                dataKey="month"
+                label={{
+                  value: "Month",
+                  position: "insideBottom",
+                  offset: -5
+                }}
+              />
+
+              <YAxis />
+
+              <Tooltip />
+
+              <Bar
+                dataKey="count"
+                name="Completed"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </section>
+
+        <section className="recent-section">
+          <div className="section-heading">
+            <div>
+              <p className="card-label">YOUR EXPERIENCES</p>
+              <h3>Recent Challenges</h3>
+            </div>
+          </div>
+
+          <div className="recent-grid">
+            {recentChallenges.map(challenge => (
+              <div className="recent-card" key={challenge.id}>
+                <h4>{challenge.title}</h4>
+                <p className="challenge-category">
+                  {challenge.category}
+                </p>
+                <p className="challenge-date">
+                  Completed {challenge.completedAt}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+      </main>
     </div>
   );
 }

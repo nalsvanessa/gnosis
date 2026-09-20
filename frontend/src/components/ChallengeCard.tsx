@@ -51,6 +51,7 @@ function ChallengeCard({
   if (isEditing) {
     return (
       <form onSubmit={handleEdit}>
+
         <input
           value={title}
           onChange={e => setTitle(e.target.value)}
@@ -86,7 +87,9 @@ function ChallengeCard({
           onChange={e => setReflection(e.target.value)}
         />
 
-        <button type="submit">Save Changes</button>
+        <button type="submit">
+          Save Changes
+        </button>
 
         <button
           type="button"
@@ -94,30 +97,41 @@ function ChallengeCard({
         >
           Cancel
         </button>
+
       </form>
     );
   }
 
-  return (
-    <div>
-      <h2>{challenge.title}</h2>
-      <p>{challenge.category}</p>
-      <p>{challenge.difficulty}</p>
-      <p>{challenge.description}</p>
-      <p>{challenge.reflection}</p>
-      <p>{challenge.completed}</p>
-      <p>{challenge.createdAt}</p>
-      <p>{challenge.completedAt}</p>
+ return (
+  <div className="challenge-card">
 
-      <button onClick={() => setIsEditing(true)}>
-        Edit
-      </button>
+    <h2>{challenge.title}</h2>
 
-      <button onClick={() => onDelete(challenge.id)}>
-        Delete
-      </button>
-    </div>
-  );
+    <p>{challenge.category}</p>
+
+    <p>{challenge.difficulty}</p>
+
+    <p>{challenge.description}</p>
+
+    <h3>Reflection</h3>
+
+    <p>{challenge.reflection}</p>
+
+    <p>{challenge.completed}</p>
+
+    <p>Started: {challenge.createdAt}</p>
+
+    <p>Completed: {challenge.completedAt}</p>
+
+    <button onClick={() => setIsEditing(true)}>
+      Edit
+    </button>
+
+    <button onClick={() => onDelete(challenge.id)}>
+      Delete
+    </button>
+
+  </div>
+)
 }
-
 export default ChallengeCard;

@@ -10,7 +10,6 @@ function Challenges() {
     const [category, setCategory] = useState("All");
     const [month, setMonth] = useState("All");
 
-
     const handleDelete = (id: number) => {
         fetch(`/api/challenge/${id}`, {
             method: 'DELETE'
@@ -30,7 +29,6 @@ function Challenges() {
             });
     };
 
-
     useEffect(() => {
         Promise.all([
             fetch('/api/challenge/completed').then(response => response.json()),
@@ -40,7 +38,6 @@ function Challenges() {
                 setChallenges([...completed, ...incomplete]);
             });
     }, []);
-
 
     const filteredChallenges = challenges.filter(challenge => {
 
@@ -63,77 +60,101 @@ function Challenges() {
         return statusMatches && categoryMatches && monthMatches;
     });
 
-
     return (
-        <div>
+        <div className="challenges-page">
             <Navbar />
 
-            <h1>My Challenges</h1>
+            <main className="challenges-content">
 
-            <div>
-                <label>Status: </label>
+                <section className="page-header">
+                    <p className="eyebrow">YOUR JOURNEY</p>
+                    <h1>My Challenges</h1>
+                    <p className="page-description">
+                        Explore the experiences you've taken on and the challenges
+                        still waiting for you.
+                    </p>
+                </section>
 
-                <select
-                    value={status}
-                    onChange={e => setStatus(e.target.value)}
-                >
-                    <option value="All">All</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Incomplete">Incomplete</option>
-                </select>
-            </div>
+                <section className="filters">
 
+                    <div className="filter-group">
+                        <label>Status</label>
 
-            <div>
-                <label>Category: </label>
+                        <select
+                            value={status}
+                            onChange={e => setStatus(e.target.value)}
+                        >
+                            <option value="All">All</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Incomplete">Incomplete</option>
+                        </select>
+                    </div>
 
-                <select
-                    value={category}
-                    onChange={e => setCategory(e.target.value)}
-                >
-                    <option value="All">All</option>
-                    <option value="Social">Social</option>
-                    <option value="Career">Career</option>
-                    <option value="Learning">Learning</option>
-                    <option value="Health & Fitness">Health & Fitness</option>
-                    <option value="Creativity">Creativity</option>
-                </select>
-            </div>
+                    <div className="filter-group">
+                        <label>Category</label>
 
+                        <select
+                            value={category}
+                            onChange={e => setCategory(e.target.value)}
+                        >
+                            <option value="All">All</option>
+                            <option value="Social">Social</option>
+                            <option value="Career">Career</option>
+                            <option value="Learning">Learning</option>
+                            <option value="Health & Fitness">Health & Fitness</option>
+                            <option value="Creativity">Creativity</option>
+                        </select>
+                    </div>
 
-            <div>
-                <label>Month: </label>
+                    <div className="filter-group">
+                        <label>Month</label>
 
-                <select
-                    value={month}
-                    onChange={e => setMonth(e.target.value)}
-                >
-                    <option value="All">All</option>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                </select>
-            </div>
+                        <select
+                            value={month}
+                            onChange={e => setMonth(e.target.value)}
+                        >
+                            <option value="All">All</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
 
+                </section>
 
-            <div>
-                {filteredChallenges.map(challenge => (
-                    <ChallengeCard
-                        key={challenge.id}
-                        challenge={challenge}
-                        onDelete={handleDelete}
-                    />
-                ))}
-            </div>
+                <section className="challenge-list">
+
+                    <div className="results-heading">
+                        <p>
+                            {filteredChallenges.length}{" "}
+                            {filteredChallenges.length === 1
+                                ? "challenge"
+                                : "challenges"}
+                        </p>
+                    </div>
+
+                    <div className="challenge-grid">
+                        {filteredChallenges.map(challenge => (
+                            <ChallengeCard
+                                key={challenge.id}
+                                challenge={challenge}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+
+                </section>
+
+            </main>
         </div>
     );
 }

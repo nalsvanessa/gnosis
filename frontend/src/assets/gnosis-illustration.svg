@@ -1,0 +1,80 @@
+<svg width="220" height="180" viewBox="0 0 220 180" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Open doorway -->
+  <path
+    d="M65 135V45H125V135"
+    fill="none"
+    stroke="#8b5cf6"
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Light inside doorway -->
+  <path
+    d="M75 125V55H115V125"
+    fill="#2a2040"
+  />
+
+  <!-- Person -->
+  <circle
+    cx="95"
+    cy="72"
+    r="8"
+    fill="#c4b5fd"
+  />
+
+  <path
+    d="M95 82L95 108"
+    stroke="#c4b5fd"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <!-- Arms -->
+  <path
+    d="M95 88L83 98"
+    stroke="#c4b5fd"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M95 88L106 94"
+    stroke="#c4b5fd"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <!-- Legs / stepping forward -->
+  <path
+    d="M95 108L84 124"
+    stroke="#c4b5fd"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M95 108L108 119"
+    stroke="#c4b5fd"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <!-- Path -->
+  <path
+    d="M108 120C125 130 145 137 170 140"
+    fill="none"
+    stroke="#8b5cf6"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M84 125C105 142 135 153 175 157"
+    fill="none"
+    stroke="#30283b"
+    stroke-width="3"
+    stroke-linecap="round"
+  />
+
+</svg>
